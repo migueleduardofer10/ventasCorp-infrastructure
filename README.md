@@ -1,6 +1,6 @@
 # ventasCorp-infrastructure
 
-Infraestructura de Ventas Corp en AWS, escrita en Terraform. Crea las 13 lambdas, el API Gateway, las colas SQS, los buckets S3 y los permisos del diagrama de arquitectura. Solo usa las recetas de DevOps en [iac-templates](https://gitlab.com/delosi/devops/iac-templates): aquí no se escriben recursos a mano.
+Infraestructura de Ventas Corp en AWS, escrita en Terraform. Crea las 13 lambdas, el API Gateway, las colas SQS, los buckets S3 y los permisos del diagrama de arquitectura. Solo usa las recetas de DevOps en [iac-templates](https://gitlab.com/delosi/devops/iac-templates). La única excepción son los `aws_lambda_permission` de `apigateway.tf`: el permiso que crea la receta de integración usa `/*/ANY/*` y API Gateway invoca con el verbo real, así que sin ese permiso manual con `/*/*` las APIs responden 500. Es el mismo arreglo que tiene api-delosi-integration-infrastructure.
 
 Lo que **no** crea, porque no hay receta: bases de datos, EventBridge, WAF, secretos y la configuración de SES. Eso lo crea DevOps aparte. Lo que falta para el primer despliegue está en [PENDIENTES.md](PENDIENTES.md).
 

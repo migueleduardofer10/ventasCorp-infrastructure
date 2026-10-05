@@ -11,6 +11,11 @@
 # document-generation las dispara SQS; master-data-sync la dispara EventBridge
 # Scheduler. Ninguna recibe llamadas HTTP.
 #
+# Al final del archivo va un aws_lambda_permission por lambda con /*/*. El permiso que crea
+# la receta de integración usa /*/ANY/* y API Gateway invoca con el verbo real
+# (GET, POST...), así que sin el manual las APIs responden 500. Es el mismo arreglo
+# que tiene api-delosi-integration-infrastructure.
+#
 # El Authorizer es externo a este repo. Los métodos van con authorization = NONE
 # y cada lambda valida el JWT. /voucher-redemptions la llama Micros, que no tiene
 # JWT; cómo se autentica (API key u otro) está por definir, hoy va abierta.
@@ -728,4 +733,78 @@ module "api_deployment" {
     module.voucher_redemption_integration_proxy,
     module.voucher_redemption_cors_proxy,
   ]
+}
+
+# ── Permisos: API Gateway → Lambda ─────────────────────────────────────
+
+resource "aws_lambda_permission" "invoicing_invoices_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.invoicing_invoices.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "invoicing_config_approvers_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.invoicing_config_approvers.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "invoicing_approval_tray_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.invoicing_approval_tray.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "invoicing_approvals_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.invoicing_approvals.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "voucher_management_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.voucher_management.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "voucher_models_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.voucher_models.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "voucher_reasons_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.voucher_reasons.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "master_data_service_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.master_data_service.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "voucher_redemption_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.voucher_redemption.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api.execution_arn}/*/*"
 }
