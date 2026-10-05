@@ -45,8 +45,8 @@ Lambda de scheduler, sin ruta:
 
 | Lambda que publica | Variable de entorno | Cola |
 |:--|:--|:--|
-| invoicing-approvals | `Sqs__SapSyncQueueUrl` | `sap-sync` |
-| invoicing-approvals | `Sqs__NotificationsQueueUrl` | `notifications` |
+| invoicing-approvals | `Sqs__SapSyncQueueUrl` ✔ | `sap-sync` |
+| invoicing-approvals | `Sqs__NotificationsQueueUrl` ✔ | `notifications` |
 | voucher-management | `Sqs__DocumentGenerationQueueUrl` ✔ | `document-generation` |
 | voucher-models | `Sqs__ModelImageGenerationQueueUrl` | `model-image-generation` |
 

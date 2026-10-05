@@ -42,7 +42,7 @@ locals {
     APP_SECRET_NAME        = var.invoicing_approvals_app_secret_name
 
     # Colas a las que publica: facturas aprobadas para SAP y pedidos de correo.
-    # A CONFIRMAR: el nombre de la variable que espera el código.
+    # Nombres de variable confirmados por el equipo de facturación.
     Sqs__SapSyncQueueUrl       = module.sqs_queues.queue_urls["sap-sync"]
     Sqs__NotificationsQueueUrl = module.sqs_queues.queue_urls["notifications"]
   }
@@ -109,7 +109,7 @@ locals {
     AWS__S3__BucketName = module.models_bucket.bucket_name
 
     # Cola a la que publica los modelos para generar su PNG.
-    # A CONFIRMAR: el nombre de la variable que espera el código.
+    # Nombres de variable confirmados por el equipo de facturación.
     Sqs__ModelImageGenerationQueueUrl = module.sqs_queues.queue_urls["model-image-generation"]
   }
 }
