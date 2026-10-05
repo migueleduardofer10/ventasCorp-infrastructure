@@ -41,6 +41,3 @@ document_generation_db_secret_name         = "delosi-ventascorp-prd/document-gen
 document_generation_app_secret_name        = "delosi-ventascorp-prd/document-generation-app"
 voucher_redemption_db_secret_name          = "delosi-ventascorp-prd/voucher-redemption-db"
 voucher_redemption_app_secret_name         = "delosi-ventascorp-prd/voucher-redemption-app"
-
-# ── Storage ───────────────────────────────────────────────────────────
-documents_bucket_name = "delosi-ventascorp-vales-s3-prd"

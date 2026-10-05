@@ -1,8 +1,8 @@
 # ventasCorp-infrastructure
 
-Infraestructura de Ventas Corp en AWS, escrita en Terraform. Crea las 13 lambdas, el API Gateway, las colas SQS y los permisos del diagrama de arquitectura. Solo usa las recetas de DevOps en [iac-templates](https://gitlab.com/delosi/devops/iac-templates): aquí no se escriben recursos a mano.
+Infraestructura de Ventas Corp en AWS, escrita en Terraform. Crea las 13 lambdas, el API Gateway, las colas SQS, los buckets S3 y los permisos del diagrama de arquitectura. Solo usa las recetas de DevOps en [iac-templates](https://gitlab.com/delosi/devops/iac-templates): aquí no se escriben recursos a mano.
 
-Lo que **no** crea, porque no hay receta: bucket S3, bases de datos, EventBridge, WAF, secretos y la configuración de SES. Eso lo crea DevOps aparte. Lo que falta para el primer despliegue está en [PENDIENTES.md](PENDIENTES.md).
+Lo que **no** crea, porque no hay receta: bases de datos, EventBridge, WAF, secretos y la configuración de SES. Eso lo crea DevOps aparte. Lo que falta para el primer despliegue está en [PENDIENTES.md](PENDIENTES.md).
 
 ## Cómo funciona
 
@@ -51,7 +51,7 @@ Un bloque `module` por lambda en `lambdas.tf`. Hay tres tipos según quién las 
 |:--|:--|:--|:--|:--|:--|
 | API-NOTIFICACION | api-invoicing-notifications | `notifications` | `Delosi.Alfie.Invoicing.Notifications.Functions` ✔ | `Delosi.Alfie.Invoicing.Notifications.Functions.NotificationFunction` ✔ | `FunctionHandler` ✔ |
 | API-SYNC-FACTURACION | api-invoicing-sap-sync | `sap-sync` | `Delosi.Alfie.Invoicing.SapSync.Functions` ✔ | `Delosi.Alfie.Invoicing.SapSync.Functions.SapSyncFunction` ✔ | `FunctionHandler` ✔ |
-| Generar PDF | api-document-generation (aún sin repo) | `document-generation` | `Delosi.Alfie.Document.Generation.Functions` ✔ | `Delosi.Alfie.Document.Generation.Functions.DocumentGenerationFunction` ✔ | `FunctionHandler` ✔ |
+| Generar PDF | api-voucher-document-generation (aún sin repo) | `document-generation` | `Delosi.Alfie.Document.Generation.Functions` ✔ | `Delosi.Alfie.Document.Generation.Functions.DocumentGenerationFunction` ✔ | `FunctionHandler` ✔ |
 
 **Lambda de scheduler.** No tiene ruta: la despierta EventBridge Scheduler por horario. El handler tiene el mismo formato que las de cola, y el método recibe el JSON del evento:
 
@@ -81,7 +81,7 @@ Todas corren en VPC, con X-Ray activo y permiso de lectura sobre sus dos secreto
 | api-voucher-models | Delosi-VentasCorp-Voucher-Models-Lambda-Dev |
 | api-voucher-reasons | Delosi-VentasCorp-Voucher-Reasons-Lambda-Dev |
 | api-voucher-redemption | Delosi-VentasCorp-Voucher-Redemption-Lambda-Dev |
-| api-document-generation | Delosi-VentasCorp-Document-Generation-Lambda-Dev |
+| api-voucher-document-generation | Delosi-VentasCorp-Document-Generation-Lambda-Dev |
 
 ### API Gateway
 
@@ -107,11 +107,20 @@ La conexión cola → consumidor la hace Terraform con `sqs_event_sources` en el
 
 El que **publica** sí necesita la URL de la cola y permiso de escritura. La URL le llega como variable de entorno (PENDIENTES.md, punto 3); el permiso todavía no tiene receta (punto 9).
 
+### Buckets S3
+
+Dos buckets en `s3.tf`, con la receta `modules/s3`: versionado, cifrado AES256, acceso público bloqueado y HTTPS obligatorio. Nombre en AWS: `delosi-ventascorp-{bucket}-{env}`.
+
+| Bucket | Lambda | Permiso | Variable de entorno | Prefijo |
+|:--|:--|:--|:--|:--|
+| `vales-s3` | document-generation | lectura y escritura | `S3_BUCKET_NAME` (la inyecta la receta) | `pdf/[ruc]/[factura]` |
+| `models-s3` | voucher-models | lectura y escritura | `AWS__S3__BucketName` | `voucher-model/background-images` |
+| `models-s3` | document-generation | lectura | `BackgroundImages__BucketName` | `voucher-model/background-images` |
+
 ### Permisos extra
 
 | Lambda | Permiso | Para qué |
 |:--|:--|:--|
-| document-generation | Escritura en el bucket `documents_bucket_name` | Guardar los PDF de los vales. La lambda recibe el nombre en `S3_BUCKET_NAME`. |
 | invoicing-notifications | Enviar correos por SES | Correos de facturas y vales |
 
 ### Secretos

@@ -9,8 +9,9 @@
 # en las de cola y scheduler es Ensamblado::Namespace.Clase::Metodo. A CONFIRMAR
 # en cada repo: solo el de invoicing-invoices está verificado.
 #
-# El API Gateway está en apigateway.tf y las colas en sqs.tf. Lo que NO se
-# gestiona en este repo por falta de receta: bucket S3, EventBridge, SES y WAF.
+# El API Gateway está en apigateway.tf, las colas en sqs.tf y los buckets en
+# s3.tf. Lo que NO se gestiona en este repo por falta de receta: EventBridge,
+# SES y WAF.
 
 # ═══ Facturación ═══
 
@@ -371,6 +372,9 @@ module "voucher_models" {
     var.voucher_models_app_secret_name,
   ]
 
+  enable_s3_permissions = true
+  s3_bucket_names       = [module.models_bucket.bucket_name]
+
   tracing_mode = "Active"
   tags         = local.common_tags
 }
@@ -444,10 +448,8 @@ module "document_generation" {
     }
   ]
 
-  # Guarda los PDF en S3. El bucket no lo crea este repo (no hay receta): lo crea
-  # DevOps. La receta le pasa el nombre al lambda en S3_BUCKET_NAME.
   enable_s3_permissions = true
-  s3_bucket_names       = [var.documents_bucket_name]
+  s3_bucket_names       = [module.documents_bucket.bucket_name, module.models_bucket.bucket_name]
 
   tracing_mode = "Active"
   tags         = local.common_tags

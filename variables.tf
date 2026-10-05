@@ -199,13 +199,6 @@ variable "voucher_redemption_app_secret_name" {
   type        = string
 }
 
-# ── Storage ───────────────────────────────────────────────────────────
-
-variable "documents_bucket_name" {
-  description = "Bucket S3 donde document-generation guarda los PDF (managed externally)"
-  type        = string
-}
-
 # ── API Gateway ──────────────────────────────────────────────────────
 
 variable "allow_origin" {

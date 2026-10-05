@@ -121,3 +121,13 @@ output "sqs_notifications_queue_url" {
   description = "SQS notifications queue URL"
   value       = module.sqs_queues.queue_urls["notifications"]
 }
+
+output "documents_bucket_name" {
+  description = "Bucket S3 donde document-generation guarda los PDF de los vales"
+  value       = module.documents_bucket.bucket_name
+}
+
+output "models_bucket_name" {
+  description = "Bucket S3 con las imágenes de fondo de los modelos de vales"
+  value       = module.models_bucket.bucket_name
+}

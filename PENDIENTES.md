@@ -31,7 +31,7 @@ Lambdas de cola, sin ruta:
 |:--|:--|:--|:--|:--|:--|
 | API-NOTIFICACION | api-invoicing-notifications | `notifications` | `Delosi.Alfie.Invoicing.Notifications.Functions` ✔ | `Delosi.Alfie.Invoicing.Notifications.Functions.NotificationFunction` ✔ | `FunctionHandler` ✔ |
 | API-SYNC-FACTURACION | api-invoicing-sap-sync | `sap-sync` | `Delosi.Alfie.Invoicing.SapSync.Functions` ✔ | `Delosi.Alfie.Invoicing.SapSync.Functions.SapSyncFunction` ✔ | `FunctionHandler` ✔ |
-| Generar PDF | api-document-generation (aún sin repo) | `document-generation` | `Delosi.Alfie.Document.Generation.Functions` ✔ | `Delosi.Alfie.Document.Generation.Functions.DocumentGenerationFunction` ✔ | `FunctionHandler` ✔ |
+| Generar PDF | api-voucher-document-generation (aún sin repo) | `document-generation` | `Delosi.Alfie.Document.Generation.Functions` ✔ | `Delosi.Alfie.Document.Generation.Functions.DocumentGenerationFunction` ✔ | `FunctionHandler` ✔ |
 
 Lambda de scheduler, sin ruta:
 
@@ -39,7 +39,7 @@ Lambda de scheduler, sin ruta:
 |:--|:--|:--|:--|:--|:--|
 | API-MAESTROS API | api-master-data-sync | 2 veces al día | `Delosi.MasterDataSync` | `Delosi.MasterDataSync.Functions.MasterDataSyncFunction` | `FunctionHandler` |
 
-**2. Nombre del bucket de documentos.** document-generation guarda los PDF en el bucket `delosi-ventascorp-vales-s3-{env}`, el nombre que propuso DevOps en minúsculas (S3 no acepta mayúsculas). Falta que lo creen y confirmen el nombre de stg y prd. Se cambia en `environments/{env}.tfvars`, variable `documents_bucket_name`.
+**2. Buckets S3.** Los crea este repo en `s3.tf` con la receta `modules/s3`: `delosi-ventascorp-vales-s3-{env}` (PDF de vales) y `delosi-ventascorp-models-s3-{env}` (imágenes de fondo de los modelos). Los permisos y variables de entorno quedaron según la tabla del equipo (ver sección Buckets S3 del README). Falta confirmar que voucher-models **escribe** en `models-s3` y no solo lee; hoy tiene lectura y escritura. Si el bucket ya existe en alguna cuenta con ese nombre, hay que importarlo al state antes del apply o el plan falla por nombre duplicado.
 
 **3. Nombre de la variable con la URL de la cola.** Terraform le pasa la URL de la cola a la lambda que publica, como variable de entorno:
 
