@@ -57,7 +57,7 @@ module "invoicing_config_approvers" {
   description      = "API de configuración de aprobadores: crear, consultar, modificar y listar"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.InvoicingConfigApprovers.Api" # A CONFIRMAR en el repo
+  handler          = "Delosi.Alfie.Invoicing.ConfigApprover.Api" # confirmado por el equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 28
@@ -89,7 +89,7 @@ module "invoicing_approval_tray" {
   description      = "API de bandeja de aprobaciones: pendientes, aprobadas, rechazadas y filtros"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.InvoicingApprovalTray.Api" # A CONFIRMAR en el repo
+  handler          = "Delosi.Alfie.Invoicing.ApprovalTray.Api" # confirmado por el equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 28
@@ -121,7 +121,7 @@ module "invoicing_approvals" {
   description      = "API de aprobaciones: aprobar, rechazar, cambiar estado y enviar facturas"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.InvoicingApprovals.Api" # A CONFIRMAR en el repo
+  handler          = "Delosi.Alfie.Invoicing.Approvals.Api" # confirmado por el equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 28

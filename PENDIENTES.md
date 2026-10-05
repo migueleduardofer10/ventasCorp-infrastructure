@@ -16,9 +16,9 @@ Lambdas de API:
 | Lambda (diagrama) | Repo | Ruta base | Handler |
 |:--|:--|:--|:--|
 | API-FACTURAS | api-invoicing-invoices | `/facturas` ✔ | `Delosi.InvoicingInvoices.Api` ✔ |
-| API-CONFIG-APROBADORES | api-invoicing-config-approvers | `/config-approvers` | `Delosi.InvoicingConfigApprovers.Api` |
-| API-BANDEJA-APROBACIONES | api-invoicing-approval-tray | `/approval-tray` | `Delosi.InvoicingApprovalTray.Api` |
-| API-APROBACIONES | api-invoicing-approvals | `/approvals` | `Delosi.InvoicingApprovals.Api` |
+| API-CONFIG-APROBADORES | api-invoicing-config-approvers | `/api/v1/approvers` ✔ | `Delosi.Alfie.Invoicing.ConfigApprover.Api` ✔ |
+| API-BANDEJA-APROBACIONES | api-invoicing-approval-tray | `/approval-tray` ✔ | `Delosi.Alfie.Invoicing.ApprovalTray.Api` ✔ |
+| API-APROBACIONES | api-invoicing-approvals | `/approvals` ✔ | `Delosi.Alfie.Invoicing.Approvals.Api` ✔ |
 | API-GESTOR | api-voucher-management | `/vouchers` ✔ | `Delosi.Alfie.Voucher.Management.Api` ✔ |
 | API-MODELOS | api-voucher-models | `/voucher-models` ✔ | `Delosi.Alfie.Voucher.Model.Api` ✔ |
 | API-MOTIVOS | api-voucher-reasons | `/voucher-reasons` ✔ | `Delosi.Alfie.Voucher.Reason.Api` ✔ |

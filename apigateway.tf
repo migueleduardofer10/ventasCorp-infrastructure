@@ -94,8 +94,29 @@ module "invoicing_invoices_integration_proxy" {
   integration_timeout     = 29000
 }
 
-# ═══ /config-approvers → lambda invoicing-config-approvers ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
+# ═══ /api/v1/approvers → lambda invoicing-config-approvers ═══
+# Ruta base confirmada por el equipo. Son tres segmentos, así que van tres
+# recursos anidados: /api → /api/v1 → /api/v1/approvers → {proxy+}.
+
+module "invoicing_config_approvers_resource_api" {
+  source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
+  company            = var.company
+  project            = var.project
+  environment        = var.environment
+  api_gateway_id     = module.api.api_gateway_id
+  parent_resource_id = module.api.root_resource_id
+  path_part          = "api"
+}
+
+module "invoicing_config_approvers_resource_v1" {
+  source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
+  company            = var.company
+  project            = var.project
+  environment        = var.environment
+  api_gateway_id     = module.api.api_gateway_id
+  parent_resource_id = module.invoicing_config_approvers_resource_api.resource_id
+  path_part          = "v1"
+}
 
 module "invoicing_config_approvers_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
@@ -103,8 +124,8 @@ module "invoicing_config_approvers_resource" {
   project            = var.project
   environment        = var.environment
   api_gateway_id     = module.api.api_gateway_id
-  parent_resource_id = module.api.root_resource_id
-  path_part          = "config-approvers"
+  parent_resource_id = module.invoicing_config_approvers_resource_v1.resource_id
+  path_part          = "approvers"
 }
 
 module "invoicing_config_approvers_resource_proxy" {
@@ -644,6 +665,7 @@ module "api_deployment" {
   trigger = sha1(jsonencode({
     resources = [
       module.invoicing_invoices_resource.resource_id, module.invoicing_invoices_resource_proxy.resource_id,
+      module.invoicing_config_approvers_resource_api.resource_id, module.invoicing_config_approvers_resource_v1.resource_id,
       module.invoicing_config_approvers_resource.resource_id, module.invoicing_config_approvers_resource_proxy.resource_id,
       module.invoicing_approval_tray_resource.resource_id, module.invoicing_approval_tray_resource_proxy.resource_id,
       module.invoicing_approvals_resource.resource_id, module.invoicing_approvals_resource_proxy.resource_id,
