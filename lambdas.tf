@@ -198,7 +198,7 @@ module "master_data_service" {
   description      = "Consulta de datos maestros: proveedor, marca y otros"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.MasterDataService.Api" # A CONFIRMAR en el repo
+  handler          = "Delosi.Alfie.Invoicing.MasterDataService.Api" # A CONFIRMAR: supuesto con la nomenclatura del equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 28

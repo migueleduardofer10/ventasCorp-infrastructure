@@ -42,7 +42,7 @@ Un bloque `module` por lambda en `lambdas.tf`. Hay tres tipos según quién las 
 | API-GESTOR | api-voucher-management | `/vouchers` ✔ | `Delosi.Alfie.Voucher.Management.Api` ✔ |
 | API-MODELOS | api-voucher-models | `/voucher-models` ✔ | `Delosi.Alfie.Voucher.Model.Api` ✔ |
 | API-MOTIVOS | api-voucher-reasons | `/voucher-reasons` ✔ | `Delosi.Alfie.Voucher.Reason.Api` ✔ |
-| API-Maestros | api-master-data-service | `/master-data` | `Delosi.MasterDataService.Api` |
+| API-Maestros | api-master-data-service | `/master-data` | `Delosi.Alfie.Invoicing.MasterDataService.Api` |
 | API-SYNC-VALES | api-voucher-redemption | `/voucher-redemptions` ✔ (la llama Micros) | `Delosi.Alfie.Voucher.Redemption.Api` ✔ |
 
 **Lambdas de cola.** No tienen ruta: las despierta SQS cuando llega un mensaje. El handler es `Ensamblado::Namespace.Clase::Metodo`, el método que recibe los mensajes:
