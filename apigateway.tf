@@ -188,7 +188,6 @@ module "invoicing_config_approvers_integration_proxy" {
 }
 
 # ═══ /approval-tray → lambda invoicing-approval-tray ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
 
 module "invoicing_approval_tray_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
@@ -255,7 +254,6 @@ module "invoicing_approval_tray_integration_proxy" {
 }
 
 # ═══ /approvals → lambda invoicing-approvals ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
 
 module "invoicing_approvals_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
@@ -322,7 +320,6 @@ module "invoicing_approvals_integration_proxy" {
 }
 
 # ═══ /vouchers → lambda voucher-management ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
 
 module "voucher_management_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
@@ -389,7 +386,6 @@ module "voucher_management_integration_proxy" {
 }
 
 # ═══ /voucher-models → lambda voucher-models ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
 
 module "voucher_models_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"
@@ -456,7 +452,6 @@ module "voucher_models_integration_proxy" {
 }
 
 # ═══ /voucher-reasons → lambda voucher-reasons ═══
-# A CONFIRMAR: debe coincidir con el prefijo de rutas de la app
 
 module "voucher_reasons_resource" {
   source             = "git::https://gitlab.com/delosi/devops/iac-templates//modules/api-gateway-resource?ref=main"

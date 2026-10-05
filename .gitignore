@@ -90,3 +90,4 @@ lambda_code/
 compile_and_zip.sh
 # Hojas de trabajo, no van al repo
 *.xlsx
+~$*

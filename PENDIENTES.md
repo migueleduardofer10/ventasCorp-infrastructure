@@ -48,6 +48,7 @@ Lambda de scheduler, sin ruta:
 | invoicing-approvals | `Sqs__SapSyncQueueUrl` | `sap-sync` |
 | invoicing-approvals | `Sqs__NotificationsQueueUrl` | `notifications` |
 | voucher-management | `Sqs__DocumentGenerationQueueUrl` ✔ | `document-generation` |
+| voucher-models | `Sqs__ModelImageGenerationQueueUrl` | `model-image-generation` |
 
 En .NET, una variable de entorno con `__` se lee como una clave con `:`. Es decir, `Sqs__SapSyncQueueUrl` equivale a tener esto en el `appsettings.json`:
 
@@ -118,7 +119,7 @@ Los de la tabla son supuestos: cada equipo confirma el ensamblado, la clase y el
 
 **8. Crear los secretos.** Dos por lambda y por ambiente, con la convención de la sección Secretos del README. La lista completa de nombres está en `environments/{env}.tfvars`.
 
-**9. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, y voucher-management en `document-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
+**9. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, voucher-management en `document-generation` y voucher-models en `model-image-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
 
 **10. Cómo se autentica Micros.** Micros llama a `/voucher-redemptions` sin JWT. Hoy la ruta va abierta. Hay que definir con el equipo de Micros si manda una API key u otra credencial, y con eso se ajusta el método en `apigateway.tf`.
 

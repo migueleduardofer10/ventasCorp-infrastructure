@@ -107,6 +107,10 @@ locals {
     # Bucket donde guarda las imágenes de fondo de los modelos
     # (prefijo voucher-model/background-images). Nombre de variable según la tabla del equipo.
     AWS__S3__BucketName = module.models_bucket.bucket_name
+
+    # Cola a la que publica los modelos para generar su PNG.
+    # A CONFIRMAR: el nombre de la variable que espera el código.
+    Sqs__ModelImageGenerationQueueUrl = module.sqs_queues.queue_urls["model-image-generation"]
   }
 }
 

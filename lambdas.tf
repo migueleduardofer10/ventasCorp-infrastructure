@@ -439,10 +439,17 @@ module "document_generation" {
     var.document_generation_app_secret_name,
   ]
 
-  # Consume la cola "document-generation" (generar PDF). Un vale por invocación.
+  # Consume dos colas con el mismo handler: "document-generation" (PDF del vale) y
+  # "model-image-generation" (PNG del modelo). El código distingue por el
+  # eventSourceARN del mensaje. Un mensaje por invocación.
   sqs_event_sources = [
     {
       event_source_arn = module.sqs_queues.queue_arns["document-generation"]
+      enabled          = true
+      batch_size       = 1
+    },
+    {
+      event_source_arn = module.sqs_queues.queue_arns["model-image-generation"]
       enabled          = true
       batch_size       = 1
     }

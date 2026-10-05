@@ -95,13 +95,14 @@ Los métodos van con `authorization = NONE`: el gateway no valida nada, cada lam
 
 ### Colas SQS
 
-Tres colas en `sqs.tf`, cada una con su DLQ: tras 3 intentos fallidos el mensaje pasa a la cola muerta. Nombre en AWS: `Delosi-ventasCorp-{cola}{env}`.
+Cuatro colas en `sqs.tf`, cada una con su DLQ: tras 3 intentos fallidos el mensaje pasa a la cola muerta. Nombre en AWS: `Delosi-ventasCorp-{cola}{env}`.
 
 | Cola | Quién publica | Quién consume | Para qué |
 |:--|:--|:--|:--|
 | `sap-sync` | invoicing-approvals | invoicing-sap-sync | Facturas aprobadas que hay que mandar a SAP |
 | `notifications` | invoicing-approvals | invoicing-notifications | Correos que hay que enviar |
 | `document-generation` | voucher-management | document-generation | Vales a los que hay que generar el PDF |
+| `model-image-generation` | voucher-models | document-generation | Modelos a los que hay que generar el PNG |
 
 La conexión cola → consumidor la hace Terraform con `sqs_event_sources` en el bloque de la lambda: AWS lee la cola y le entrega los mensajes a la lambda, que no necesita saber nada de la cola.
 

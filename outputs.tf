@@ -117,6 +117,11 @@ output "sqs_document_generation_queue_url" {
   value       = module.sqs_queues.queue_urls["document-generation"]
 }
 
+output "sqs_model_image_generation_queue_url" {
+  description = "SQS model-image-generation queue URL"
+  value       = module.sqs_queues.queue_urls["model-image-generation"]
+}
+
 output "sqs_notifications_queue_url" {
   description = "SQS notifications queue URL"
   value       = module.sqs_queues.queue_urls["notifications"]

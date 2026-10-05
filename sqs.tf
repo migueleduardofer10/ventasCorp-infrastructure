@@ -10,6 +10,7 @@
 #   sap-sync            → publica invoicing-approvals (enviar facturas), consume invoicing-sap-sync
 #   notifications       → publica invoicing-approvals (correos),         consume invoicing-notifications
 #   document-generation → publica voucher-management (generar vales),   consume document-generation
+#   model-image-generation → publica voucher-models (generar PNG del modelo), consume document-generation
 
 module "sqs_queues" {
   source      = "git::https://gitlab.com/delosi/devops/iac-templates//modules/sqs?ref=main"
@@ -35,6 +36,13 @@ module "sqs_queues" {
     {
       name                       = "document-generation"
       visibility_timeout_seconds = 310 # lambda document-generation: 300 s
+      max_receive_count          = 3
+      create_dlq                 = true
+      message_retention_seconds  = 1209600
+    },
+    {
+      name                       = "model-image-generation"
+      visibility_timeout_seconds = 310 # misma lambda document-generation: 300 s
       max_receive_count          = 3
       create_dlq                 = true
       message_retention_seconds  = 1209600
