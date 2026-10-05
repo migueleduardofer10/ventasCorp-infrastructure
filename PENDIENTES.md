@@ -29,8 +29,8 @@ Lambdas de cola, sin ruta:
 
 | Lambda (diagrama) | Repo | Cola | Ensamblado | Clase | Método |
 |:--|:--|:--|:--|:--|:--|
-| API-NOTIFICACION | api-invoicing-notifications | `notifications` | `Delosi.InvoicingNotifications` | `Delosi.InvoicingNotifications.Functions.NotificationFunction` | `FunctionHandler` |
-| API-SYNC-FACTURACION | api-invoicing-sap-sync | `sap-sync` | `Delosi.InvoicingSapSync` | `Delosi.InvoicingSapSync.Functions.SapSyncFunction` | `FunctionHandler` |
+| API-NOTIFICACION | api-invoicing-notifications | `notifications` | `Delosi.Alfie.Invoicing.Notifications.Functions` ✔ | `Delosi.Alfie.Invoicing.Notifications.Functions.NotificationFunction` ✔ | `FunctionHandler` ✔ |
+| API-SYNC-FACTURACION | api-invoicing-sap-sync | `sap-sync` | `Delosi.Alfie.Invoicing.SapSync.Functions` ✔ | `Delosi.Alfie.Invoicing.SapSync.Functions.SapSyncFunction` ✔ | `FunctionHandler` ✔ |
 | Generar PDF | api-document-generation (aún sin repo) | `document-generation` | `Delosi.Alfie.Document.Generation.Functions` ✔ | `Delosi.Alfie.Document.Generation.Functions.DocumentGenerationFunction` ✔ | `FunctionHandler` ✔ |
 
 Lambda de scheduler, sin ruta:

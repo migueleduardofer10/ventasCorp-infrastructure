@@ -155,7 +155,7 @@ module "invoicing_sap_sync" {
   description      = "Sincronización de facturación con SAP: crear, consultar y estados"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.InvoicingSapSync::Delosi.InvoicingSapSync.Functions.SapSyncFunction::FunctionHandler" # A CONFIRMAR: lambda de cola, formato Ensamblado::Clase::Metodo
+  handler          = "Delosi.Alfie.Invoicing.SapSync.Functions::Delosi.Alfie.Invoicing.SapSync.Functions.SapSyncFunction::FunctionHandler" # confirmado por el equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 300
@@ -276,7 +276,7 @@ module "invoicing_notifications" {
   description      = "Notificaciones por correo de facturas y vales"
   runtime          = "dotnet8"
   architecture     = "x86_64"
-  handler          = "Delosi.InvoicingNotifications::Delosi.InvoicingNotifications.Functions.NotificationFunction::FunctionHandler" # A CONFIRMAR: lambda de cola (la dispara SQS segun el diagrama), formato Ensamblado::Clase::Metodo
+  handler          = "Delosi.Alfie.Invoicing.Notifications.Functions::Delosi.Alfie.Invoicing.Notifications.Functions.NotificationFunction::FunctionHandler" # confirmado por el equipo
   source_code_path = var.lambda_source_path
   memory_size      = 512
   timeout          = 28
