@@ -96,22 +96,6 @@ locals {
 }
 
 locals {
-  voucher_models_environment = {
-    ENVIRONMENT            = var.execution_environment
-    ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.db_secret_name
-    APP_SECRET_NAME        = var.app_secret_name
-
-    # Bucket donde guarda las imágenes de fondo de los modelos
-    # (prefijo voucher-model/background-images). Nombre de variable según la tabla del equipo.
-    AWS__S3__BucketName = module.models_bucket.bucket_name
-
-    # Cola a la que publica los modelos para generar su PNG. Variable A CONFIRMAR por el equipo.
-    Sqs__ModelImageGenerationQueueUrl = module.sqs_queues.queue_urls["model-image-generation"]
-  }
-}
-
-locals {
   voucher_reasons_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
@@ -127,9 +111,8 @@ locals {
     DB_SECRET_NAME         = var.db_secret_name
     APP_SECRET_NAME        = var.app_secret_name
 
-    # Buckets: PDF de vales e imágenes de fondo. Nombres según la tabla del equipo.
-    S3_BUCKET_NAME               = module.documents_bucket.bucket_name
-    BackgroundImages__BucketName = module.models_bucket.bucket_name
+    # Bucket donde guarda los PDF y PNG de los vales. Nombre según la tabla del equipo.
+    S3_BUCKET_NAME = module.documents_bucket.bucket_name
   }
 }
 

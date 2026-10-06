@@ -20,7 +20,6 @@ Lambdas de API:
 | API-BANDEJA-APROBACIONES | api-invoicing-approval-tray | `/approval-tray` ✔ | `Delosi.Alfie.Invoicing.ApprovalTray.Api` ✔ |
 | API-APROBACIONES | api-invoicing-approvals | `/approvals` ✔ | `Delosi.Alfie.Invoicing.Approvals.Api` ✔ |
 | API-GESTOR | api-voucher-management | `/vouchers` ✔ | `Delosi.Alfie.Voucher.Management.Api` ✔ |
-| API-MODELOS | api-voucher-models | `/voucher-models` ✔ | `Delosi.Alfie.Voucher.Model.Api` ✔ |
 | API-MOTIVOS | api-voucher-reasons | `/voucher-reasons` ✔ | `Delosi.Alfie.Voucher.Reason.Api` ✔ |
 | API-Maestros | api-master-data-service | `/master-data` | `Delosi.Alfie.Invoicing.MasterDataService.Api` |
 | API-SYNC-VALES | api-voucher-redemption | `/voucher-redemptions` ✔ (la llama Micros) | `Delosi.Alfie.Voucher.Redemption.Api` ✔ |
@@ -39,7 +38,7 @@ Lambda de scheduler, sin ruta:
 |:--|:--|:--|:--|:--|:--|
 | API-MAESTROS API | api-master-data-sync | 2 veces al día | `Delosi.MasterDataSync` | `Delosi.MasterDataSync.Functions.MasterDataSyncFunction` | `FunctionHandler` |
 
-**2. Buckets S3.** Los crea este repo en `s3.tf` con la receta `modules/s3`: `delosi-ventascorp-vales-s3-{env}` (PDF de vales) y `delosi-ventascorp-models-s3-{env}` (imágenes de fondo de los modelos). Los permisos y variables de entorno quedaron según la tabla del equipo (ver sección Buckets S3 del README). Falta confirmar que voucher-models **escribe** en `models-s3` y no solo lee; hoy tiene lectura y escritura. Si el bucket ya existe en alguna cuenta con ese nombre, hay que importarlo al state antes del apply o el plan falla por nombre duplicado.
+**2. Bucket S3.** Lo crea este repo en `s3.tf` con la receta `modules/s3`: `delosi-ventascorp-vales-s3-{env}` (PDF y PNG de vales). Los permisos y variables de entorno quedaron según la tabla del equipo (ver sección Buckets S3 del README). Si el bucket ya existe en alguna cuenta con ese nombre, hay que importarlo al state antes del apply o el plan falla por nombre duplicado.
 
 **3. Nombre de la variable con la URL de la cola.** Terraform le pasa la URL de la cola a la lambda que publica, como variable de entorno:
 
@@ -48,7 +47,6 @@ Lambda de scheduler, sin ruta:
 | invoicing-approvals | `Sqs__SapSyncQueueUrl` ✔ | `sap-sync` |
 | invoicing-approvals | `Sqs__NotificationsQueueUrl` ✔ | `notifications` |
 | voucher-management | `Sqs__DocumentGenerationQueueUrl` ✔ | `document-generation` |
-| voucher-models | `Sqs__ModelImageGenerationQueueUrl` | `model-image-generation` |
 
 En .NET, una variable de entorno con `__` se lee como una clave con `:`. Es decir, `Sqs__SapSyncQueueUrl` equivale a tener esto en el `appsettings.json`:
 
@@ -121,7 +119,7 @@ Los de la tabla son supuestos: cada equipo confirma el ensamblado, la clase y el
 
 **9. Crear los secretos.** Dos por ambiente, compartidos por todas las lambdas: `delosi-alfie-ventascorp-{env}/db` y `delosi-alfie-ventascorp-{env}/app`. Los crea DevOps vacíos y el equipo de desarrollo carga las claves (sección Secretos del README).
 
-**10. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, voucher-management en `document-generation` y voucher-models en `model-image-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
+**10. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications` y voucher-management en `document-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
 
 **11. Cómo se autentica Micros.** Micros llama a `/voucher-redemptions` sin JWT. Hoy la ruta va abierta. Hay que definir con el equipo de Micros si manda una API key u otra credencial, y con eso se ajusta el método en `apigateway.tf`.
 

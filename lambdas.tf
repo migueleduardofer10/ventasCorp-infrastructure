@@ -342,41 +342,6 @@ module "voucher_management" {
   tags         = local.common_tags
 }
 
-# ── Lambda: Voucher-Models ─
-
-module "voucher_models" {
-  source           = "git::https://gitlab.com/delosi/devops/iac-templates//modules/lambda?ref=main"
-  company          = var.company
-  project          = var.project
-  environment      = var.environment
-  function_name    = "voucher-models"
-  description      = "Modelos de vales: crear, modificar, consultar y listar"
-  runtime          = "dotnet8"
-  architecture     = "x86_64"
-  handler          = "Delosi.Alfie.Voucher.Model.Api" # confirmado por el equipo
-  source_code_path = var.lambda_source_path
-  memory_size      = 512
-  timeout          = 28
-
-  vpc_id             = var.vpc_id
-  security_group_ids = [var.security_group_id]
-  subnet_ids         = [var.subnet_id1, var.subnet_id2]
-
-  environment_variables = local.voucher_models_environment
-
-  enable_secrets_manager_permissions = true
-  secrets_manager_secret_names = [
-    var.db_secret_name,
-    var.app_secret_name,
-  ]
-
-  enable_s3_permissions = true
-  s3_bucket_names       = [module.models_bucket.bucket_name]
-
-  tracing_mode = "Active"
-  tags         = local.common_tags
-}
-
 # ── Lambda: Voucher-Reasons ─
 
 module "voucher_reasons" {
@@ -437,24 +402,17 @@ module "document_generation" {
     var.app_secret_name,
   ]
 
-  # Consume dos colas con el mismo handler: "document-generation" (PDF del vale) y
-  # "model-image-generation" (PNG del modelo). El código distingue por el
-  # eventSourceARN del mensaje. Un mensaje por invocación.
+  # Consume la cola "document-generation" (PDF y PNG del vale). Un mensaje por invocación.
   sqs_event_sources = [
     {
       event_source_arn = module.sqs_queues.queue_arns["document-generation"]
-      enabled          = true
-      batch_size       = 1
-    },
-    {
-      event_source_arn = module.sqs_queues.queue_arns["model-image-generation"]
       enabled          = true
       batch_size       = 1
     }
   ]
 
   enable_s3_permissions = true
-  s3_bucket_names       = [module.documents_bucket.bucket_name, module.models_bucket.bucket_name]
+  s3_bucket_names       = [module.documents_bucket.bucket_name]
 
   tracing_mode = "Active"
   tags         = local.common_tags

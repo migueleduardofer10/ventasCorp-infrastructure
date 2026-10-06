@@ -6,7 +6,7 @@ Lo que **no** crea, porque no hay receta: bases de datos, EventBridge, WAF, secr
 
 ## Cómo funciona
 
-Cada repo de aplicación (`api-invoicing-invoices`, `api-voucher-models`, etc.) se despliega en una lambda. El trabajo se reparte así:
+Cada repo de aplicación (`api-invoicing-invoices`, `api-voucher-management`, etc.) se despliega en una lambda. El trabajo se reparte así:
 
 | Quién | Qué hace |
 |:--|:--|
@@ -18,7 +18,7 @@ Por eso hay dos cosas que tienen que coincidir entre este repo y cada repo app:
 1. **El nombre de la lambda.** Terraform la crea como `Delosi-VentasCorp-{Function-Name}-Lambda-{Env}`, donde `{Function-Name}` es el nombre del repo sin el prefijo `api-`, con mayúscula inicial en cada palabra. Ese mismo nombre va en el `.gitlab-ci.yml` del repo app, en `DEV_AWS_FUNCTION_NAME`, `STG_AWS_FUNCTION_NAME` y `PRD_FUNCTION_NAME`. Si no coincide, el pipeline del app compila pero no encuentra dónde desplegar.
 
    ```
-   repo api-voucher-models  →  Delosi-VentasCorp-Voucher-Models-Lambda-Dev
+   repo api-voucher-management  →  Delosi-VentasCorp-Voucher-Management-Lambda-Dev
    ```
 
 2. **El handler.** Le dice a AWS qué código ejecutar. Lo fija Terraform y el pipeline del app no lo toca. Si está mal, el despliegue sale en verde pero la lambda falla en cada llamada.
@@ -40,7 +40,6 @@ Un bloque `module` por lambda en `lambdas.tf`. Hay tres tipos según quién las 
 | API-BANDEJA-APROBACIONES | api-invoicing-approval-tray | `/approval-tray` ✔ | `Delosi.Alfie.Invoicing.ApprovalTray.Api` ✔ |
 | API-APROBACIONES | api-invoicing-approvals | `/approvals` ✔ | `Delosi.Alfie.Invoicing.Approvals.Api` ✔ |
 | API-GESTOR | api-voucher-management | `/vouchers` ✔ | `Delosi.Alfie.Voucher.Management.Api` ✔ |
-| API-MODELOS | api-voucher-models | `/voucher-models` ✔ | `Delosi.Alfie.Voucher.Model.Api` ✔ |
 | API-MOTIVOS | api-voucher-reasons | `/voucher-reasons` ✔ | `Delosi.Alfie.Voucher.Reason.Api` ✔ |
 | API-Maestros | api-master-data-service | `/master-data` | `Delosi.Alfie.Invoicing.MasterDataService.Api` |
 | API-SYNC-VALES | api-voucher-redemption | `/voucher-redemptions` ✔ (la llama Micros) | `Delosi.Alfie.Voucher.Redemption.Api` ✔ |
@@ -78,7 +77,6 @@ Todas corren en VPC, con X-Ray activo y permiso de lectura sobre sus secretos. L
 | api-master-data-sync | Delosi-VentasCorp-Master-Data-Sync-Lambda-Dev |
 | api-master-data-service | Delosi-VentasCorp-Master-Data-Service-Lambda-Dev |
 | api-voucher-management | Delosi-VentasCorp-Voucher-Management-Lambda-Dev |
-| api-voucher-models | Delosi-VentasCorp-Voucher-Models-Lambda-Dev |
 | api-voucher-reasons | Delosi-VentasCorp-Voucher-Reasons-Lambda-Dev |
 | api-voucher-redemption | Delosi-VentasCorp-Voucher-Redemption-Lambda-Dev |
 | api-voucher-document-generation | Delosi-VentasCorp-Document-Generation-Lambda-Dev |
@@ -87,7 +85,7 @@ Todas corren en VPC, con X-Ray activo y permiso de lectura sobre sus secretos. L
 
 Un solo API Gateway REST en `apigateway.tf`, `Delosi-VentasCorp-Main-Api-Gateway-{Env}` en AWS. Cada lambda de API cuelga de su ruta base con integración proxy: `/{ruta-base}/{proxy+}` → lambda. El gateway no conoce los endpoints reales, solo manda todo lo que empiece con la ruta base a la lambda, y la app resuelve el resto.
 
-**La ruta base tiene que coincidir con el prefijo de la app.** En facturas, por ejemplo, es el `MapGroup("/facturas")` de `InvoiceEndpoints.cs`. Si la app define `/modelos/crear` pero el gateway usa `/voucher-models`, toda llamada responde 404.
+**La ruta base tiene que coincidir con el prefijo de la app.** En facturas, por ejemplo, es el `MapGroup("/facturas")` de `InvoiceEndpoints.cs`. Si la app define `/vales/crear` pero el gateway usa `/vouchers`, toda llamada responde 404.
 
 La URL base sale en `terraform output api_invoke_url`. Un endpoint queda como `{url-base}/facturas/listar`.
 
@@ -95,28 +93,25 @@ Los métodos van con `authorization = NONE`: el gateway no valida nada, cada lam
 
 ### Colas SQS
 
-Cuatro colas en `sqs.tf`, cada una con su DLQ: tras 3 intentos fallidos el mensaje pasa a la cola muerta. Nombre en AWS: `Delosi-ventasCorp-{cola}{env}`.
+Tres colas en `sqs.tf`, cada una con su DLQ: tras 3 intentos fallidos el mensaje pasa a la cola muerta. Nombre en AWS: `Delosi-ventasCorp-{cola}{env}`.
 
 | Cola | Quién publica | Quién consume | Para qué |
 |:--|:--|:--|:--|
 | `sap-sync` | invoicing-approvals | invoicing-sap-sync | Facturas aprobadas que hay que mandar a SAP |
 | `notifications` | invoicing-approvals | invoicing-notifications | Correos que hay que enviar |
 | `document-generation` | voucher-management | document-generation | Vales a los que hay que generar el PDF |
-| `model-image-generation` | voucher-models | document-generation | Modelos a los que hay que generar el PNG |
 
 La conexión cola → consumidor la hace Terraform con `sqs_event_sources` en el bloque de la lambda: AWS lee la cola y le entrega los mensajes a la lambda, que no necesita saber nada de la cola.
 
-El que **publica** sí necesita la URL de la cola y permiso de escritura. La URL le llega como variable de entorno (PENDIENTES.md, punto 3); el permiso todavía no tiene receta (punto 9).
+El que **publica** sí necesita la URL de la cola y permiso de escritura. La URL le llega como variable de entorno (PENDIENTES.md, punto 3); el permiso todavía no tiene receta (punto 10).
 
 ### Buckets S3
 
-Dos buckets en `s3.tf`, con la receta `modules/s3`: versionado, cifrado AES256, acceso público bloqueado y HTTPS obligatorio. Nombre en AWS: `delosi-ventascorp-{bucket}-{env}`.
+Un bucket en `s3.tf`, con la receta `modules/s3`: versionado, cifrado AES256, acceso público bloqueado y HTTPS obligatorio. Nombre en AWS: `delosi-ventascorp-{bucket}-{env}`.
 
 | Bucket | Lambda | Permiso | Variable de entorno | Prefijo |
 |:--|:--|:--|:--|:--|
-| `vales-s3` | document-generation | lectura y escritura | `S3_BUCKET_NAME` (la inyecta la receta) | `pdf/[ruc]/[factura]` |
-| `models-s3` | voucher-models | lectura y escritura | `AWS__S3__BucketName` | `voucher-model/background-images` |
-| `models-s3` | document-generation | lectura | `BackgroundImages__BucketName` | `voucher-model/background-images` |
+| `vales-s3` | document-generation | lectura y escritura | `S3_BUCKET_NAME` | `pdf/[ruc]/[factura]` (PDF y PNG) |
 
 ### Permisos extra
 

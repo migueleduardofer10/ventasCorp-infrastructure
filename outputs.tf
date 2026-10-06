@@ -70,14 +70,6 @@ output "voucher_management_function_arn" {
   value = module.voucher_management.function_arn
 }
 
-output "voucher_models_function_name" {
-  value = module.voucher_models.function_name
-}
-
-output "voucher_models_function_arn" {
-  value = module.voucher_models.function_arn
-}
-
 output "voucher_reasons_function_name" {
   value = module.voucher_reasons.function_name
 }
@@ -117,11 +109,6 @@ output "sqs_document_generation_queue_url" {
   value       = module.sqs_queues.queue_urls["document-generation"]
 }
 
-output "sqs_model_image_generation_queue_url" {
-  description = "SQS model-image-generation queue URL"
-  value       = module.sqs_queues.queue_urls["model-image-generation"]
-}
-
 output "sqs_notifications_queue_url" {
   description = "SQS notifications queue URL"
   value       = module.sqs_queues.queue_urls["notifications"]
@@ -130,9 +117,4 @@ output "sqs_notifications_queue_url" {
 output "documents_bucket_name" {
   description = "Bucket S3 donde document-generation guarda los PDF de los vales"
   value       = module.documents_bucket.bucket_name
-}
-
-output "models_bucket_name" {
-  description = "Bucket S3 con las imágenes de fondo de los modelos de vales"
-  value       = module.models_bucket.bucket_name
 }
