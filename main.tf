@@ -5,8 +5,8 @@ locals {
   invoicing_invoices_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_invoices_db_secret_name
-    APP_SECRET_NAME        = var.invoicing_invoices_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
 
     # Una sola Lambda atiende las cuatro operaciones: crear, actualizar, consultar y listar
     INVOICE_OPERATION = "All"
@@ -20,8 +20,8 @@ locals {
   invoicing_config_approvers_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_config_approvers_db_secret_name
-    APP_SECRET_NAME        = var.invoicing_config_approvers_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -29,8 +29,8 @@ locals {
   invoicing_approval_tray_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_approval_tray_db_secret_name
-    APP_SECRET_NAME        = var.invoicing_approval_tray_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -38,8 +38,8 @@ locals {
   invoicing_approvals_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_approvals_db_secret_name
-    APP_SECRET_NAME        = var.invoicing_approvals_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
 
     # Colas a las que publica: facturas aprobadas para SAP y pedidos de correo.
     # Nombres de variable confirmados por el equipo de facturación.
@@ -52,7 +52,7 @@ locals {
   invoicing_sap_sync_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    APP_SECRET_NAME        = var.invoicing_sap_sync_app_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -60,8 +60,8 @@ locals {
   master_data_service_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.master_data_service_db_secret_name
-    APP_SECRET_NAME        = var.master_data_service_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -69,8 +69,8 @@ locals {
   master_data_sync_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.master_data_sync_db_secret_name
-    APP_SECRET_NAME        = var.master_data_sync_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -78,7 +78,7 @@ locals {
   invoicing_notifications_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    APP_SECRET_NAME        = var.invoicing_notifications_app_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -86,8 +86,8 @@ locals {
   voucher_management_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.voucher_management_db_secret_name
-    APP_SECRET_NAME        = var.voucher_management_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
 
     # Cola a la que publica los vales generados para que se cree su PDF.
     # Nombre de la variable confirmado por el equipo.
@@ -99,8 +99,8 @@ locals {
   voucher_models_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.voucher_models_db_secret_name
-    APP_SECRET_NAME        = var.voucher_models_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
 
     # Bucket donde guarda las imágenes de fondo de los modelos
     # (prefijo voucher-model/background-images). Nombre de variable según la tabla del equipo.
@@ -115,8 +115,8 @@ locals {
   voucher_reasons_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.voucher_reasons_db_secret_name
-    APP_SECRET_NAME        = var.voucher_reasons_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }
 
@@ -124,8 +124,8 @@ locals {
   document_generation_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.document_generation_db_secret_name
-    APP_SECRET_NAME        = var.document_generation_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
 
     # Buckets: PDF de vales e imágenes de fondo. Nombres según la tabla del equipo.
     S3_BUCKET_NAME               = module.documents_bucket.bucket_name
@@ -137,7 +137,7 @@ locals {
   voucher_redemption_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.voucher_redemption_db_secret_name
-    APP_SECRET_NAME        = var.voucher_redemption_app_secret_name
+    DB_SECRET_NAME         = var.db_secret_name
+    APP_SECRET_NAME        = var.app_secret_name
   }
 }

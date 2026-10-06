@@ -126,33 +126,55 @@ Dos buckets en `s3.tf`, con la receta `modules/s3`: versionado, cifrado AES256, 
 
 ### Secretos
 
-Dos por lambda y por ambiente (sap-sync y notifications solo tienen el `-app`: no usan base de datos), creados a mano en Secrets Manager. Los tfvars solo guardan sus nombres, con esta convención:
+Dos por ambiente, compartidos por todas las lambdas, creados por DevOps en Secrets Manager. Los tfvars solo guardan sus nombres:
 
 ```
-delosi-ventascorp-{env}/{function_name}-db    → conexión a la base
-delosi-ventascorp-{env}/{function_name}-app   → JWT y demás configuración sensible
+delosi-alfie-ventascorp-{env}/db    → conexión a la base
+delosi-alfie-ventascorp-{env}/app   → JWT, SAP, Micros, SES y demás configuración sensible
 ```
 
-La lambda recibe los nombres en `DB_SECRET_NAME` y `APP_SECRET_NAME` y los lee al arrancar. Ejemplo para facturas en dev:
+La lambda recibe los nombres en `DB_SECRET_NAME` y `APP_SECRET_NAME` y los lee al arrancar. Cada lambda lee solo las claves que le sirven: las de facturación `ConnectionStrings__Facturacion`, las de vales `ConnectionStrings__Vales` y las de maestros `ConnectionStrings__MasterData`. Ejemplo en dev:
 
-`delosi-ventascorp-dev/invoicing-invoices-db`
+`delosi-alfie-ventascorp-dev/db`
 ```json
 {
-  "ConnectionStrings__Postgres": "Host=HOST;Port=5432;Database=invoicing_db;Username=USER;Password=PASSWORD;SSL Mode=VerifyFull;Root Certificate=/var/task/certificates/global-bundle.pem;Pooling=true;Maximum Pool Size=10;Timeout=10;Command Timeout=20;Include Error Detail=false"
+  "ConnectionStrings__Facturacion": "Host=HOST;Port=5432;Database=facturacion_db;Username=USER;Password=PASSWORD;SSL Mode=VerifyFull;Root Certificate=/var/task/certificates/global-bundle.pem",
+  "ConnectionStrings__Vales":       "Host=HOST;Port=5432;Database=vales_db;Username=USER;Password=PASSWORD;SSL Mode=VerifyFull;Root Certificate=/var/task/certificates/global-bundle.pem",
+  "ConnectionStrings__MasterData":  "Host=HOST;Port=5432;Database=maestros_db;Username=USER;Password=PASSWORD;SSL Mode=VerifyFull;Root Certificate=/var/task/certificates/global-bundle.pem"
 }
 ```
 
-`delosi-ventascorp-dev/invoicing-invoices-app`
+`delosi-alfie-ventascorp-dev/app`
 ```json
 {
   "JwtAuth__Enabled": true,
   "JwtAuth__MetadataAddress": "https://IDP/.well-known/openid-configuration",
   "JwtAuth__ValidIssuer": "https://IDP",
-  "JwtAuth__ValidAudience": "api-invoicing-invoices"
+  "JwtAuth__ValidAudience": "alfie-ventascorp",
+  "Cors__AllowedOrigins": "https://www.alfie.pe",
+  "Swagger__Enabled": false,
+  "UserDirectory__BaseUrl": "https://...",
+  "UserDirectory__ExistsPathTemplate": "/users/{0}/exists",
+  "ApprovalScope__CompanyCodes": "<companyId>=<companyCode>;...",
+  "DelosiApi__BaseUrl": "https://api.delosi.pe",
+  "DelosiApi__TokenPath": "/oauth/token",
+  "DelosiApi__ClientId": "xxxxx",
+  "DelosiApi__ClientSecret": "xxxxx",
+  "DelosiApi__Username": "xxxxx",
+  "DelosiApi__Password": "xxxxx",
+  "Messaging__MaxMessageBytes": 262144
 }
 ```
 
-Las claves de cada secreto dependen de lo que lea el código de cada lambda. El `__` se convierte en `:` en .NET: `JwtAuth__Enabled` se lee como `config["JwtAuth:Enabled"]`.
+| Bloque | Quién lo lee |
+|:--|:--|
+| `JwtAuth__*`, `Cors__*`, `Swagger__*` | Las 9 APIs |
+| `UserDirectory__*` | invoicing-config-approvers |
+| `ApprovalScope__*` | invoicing-approvals |
+| `DelosiApi__*` | master-data-sync |
+| `Messaging__*` | invoicing-sap-sync e invoicing-notifications |
+
+Las claves las define el código de cada lambda y las asigna el equipo de desarrollo. El `__` se convierte en `:` en .NET: `JwtAuth__Enabled` se lee como `config["JwtAuth:Enabled"]`.
 
 ## Cómo desplegar
 
@@ -177,7 +199,6 @@ terraform plan -var-file=environments/dev.tfvars
 
 1. Un bloque `module` más en `lambdas.tf`, copiando uno del mismo tipo (API o cola).
 2. Su `local` de variables de entorno en `main.tf`.
-3. Sus dos variables de secreto en `variables.tf` y el nombre del secreto en los tres tfvars.
-4. Si es de API, su bloque de ruta en `apigateway.tf` y sus entradas en el `trigger` y el `depends_on` del deployment.
-5. Si es de cola, la cola en `sqs.tf` y el `sqs_event_sources` en el bloque de la lambda.
-6. En el repo app, el nombre de la lambda en `DEV_AWS_FUNCTION_NAME`, `STG_AWS_FUNCTION_NAME` y `PRD_FUNCTION_NAME`.
+3. Si es de API, su bloque de ruta en `apigateway.tf` y sus entradas en el `trigger` y el `depends_on` del deployment.
+4. Si es de cola, la cola en `sqs.tf` y el `sqs_event_sources` en el bloque de la lambda.
+5. En el repo app, el nombre de la lambda en `DEV_AWS_FUNCTION_NAME`, `STG_AWS_FUNCTION_NAME` y `PRD_FUNCTION_NAME`.

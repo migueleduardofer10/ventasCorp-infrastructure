@@ -39,8 +39,8 @@ module "invoicing_invoices" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_invoices_db_secret_name,
-    var.invoicing_invoices_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -71,8 +71,8 @@ module "invoicing_config_approvers" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_config_approvers_db_secret_name,
-    var.invoicing_config_approvers_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -103,8 +103,8 @@ module "invoicing_approval_tray" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_approval_tray_db_secret_name,
-    var.invoicing_approval_tray_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -135,8 +135,8 @@ module "invoicing_approvals" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_approvals_db_secret_name,
-    var.invoicing_approvals_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -169,7 +169,7 @@ module "invoicing_sap_sync" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_sap_sync_app_secret_name,
+    var.app_secret_name,
   ]
 
   # Consume la cola "sap-sync" (envío a SAP). La receta crea el event source
@@ -211,8 +211,8 @@ module "master_data_service" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.master_data_service_db_secret_name,
-    var.master_data_service_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -247,8 +247,8 @@ module "master_data_sync" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.master_data_sync_db_secret_name,
-    var.master_data_sync_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   # Corre dos veces al día. A CONFIRMAR las horas; provisional: 6:00 y 18:00 Lima.
@@ -289,7 +289,7 @@ module "invoicing_notifications" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_notifications_app_secret_name,
+    var.app_secret_name,
   ]
 
   # Envía los correos de facturas y vales por Amazon SES
@@ -334,8 +334,8 @@ module "voucher_management" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.voucher_management_db_secret_name,
-    var.voucher_management_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -366,8 +366,8 @@ module "voucher_models" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.voucher_models_db_secret_name,
-    var.voucher_models_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   enable_s3_permissions = true
@@ -401,8 +401,8 @@ module "voucher_reasons" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.voucher_reasons_db_secret_name,
-    var.voucher_reasons_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"
@@ -433,8 +433,8 @@ module "document_generation" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.document_generation_db_secret_name,
-    var.document_generation_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   # Consume dos colas con el mismo handler: "document-generation" (PDF del vale) y
@@ -486,8 +486,8 @@ module "voucher_redemption" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.voucher_redemption_db_secret_name,
-    var.voucher_redemption_app_secret_name,
+    var.db_secret_name,
+    var.app_secret_name,
   ]
 
   tracing_mode = "Active"

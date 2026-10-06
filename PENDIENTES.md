@@ -111,17 +111,19 @@ Los de la tabla son supuestos: cada equipo confirma el ensamblado, la clase y el
 
 **5. Horas del scheduler de API-MAESTROS API.** master-data-sync la dispara EventBridge Scheduler, no el gateway. Corre dos veces al día; provisional a las 6:00 y 18:00 Lima. Falta confirmar las horas; se cambian en `schedule_expression` del bloque `module "master_data_sync"` en `lambdas.tf`, por ejemplo `cron(0 6,18 * * ? *)`. El handler es de scheduler, no de API (punto 4): el método recibe el JSON del evento, no un request HTTP.
 
+**6. Clave de la cadena de conexión.** El secreto `/db` es uno solo para las tres bases, así que la clave tiene que decir a cuál apunta: las lambdas de facturación leen `ConnectionStrings__Facturacion`, las de vales `ConnectionStrings__Vales` y las de maestros `ConnectionStrings__MasterData`. Hoy facturación y vales leen `ConnectionStrings__Postgres`; cada equipo cambia ese nombre en su `GetConnectionString(...)`.
+
 ### DevOps
 
-**6. Red de las lambdas.** Los IDs de VPC, subnets y security group están copiados de `api-delosi-integration-infrastructure` sin verificar. Las lambdas necesitan llegar al PostgreSQL de Ventas Corp (puerto 5432), a Secrets Manager y a internet por NAT (IDP del JWT, SAP PI, API Delosi, Micros). Se cambian en `environments/{env}.tfvars`: `vpc_id`, `subnet_id1`, `subnet_id2`, `security_group_id`.
+**7. Red de las lambdas.** Los IDs de VPC, subnets y security group están copiados de `api-delosi-integration-infrastructure` sin verificar. Las lambdas necesitan llegar al PostgreSQL de Ventas Corp (puerto 5432), a Secrets Manager y a internet por NAT (IDP del JWT, SAP PI, API Delosi, Micros). Se cambian en `environments/{env}.tfvars`: `vpc_id`, `subnet_id1`, `subnet_id2`, `security_group_id`.
 
-**7. Buckets del state de Terraform.** Terraform guarda lo que creó en un bucket S3 que **tiene que existir antes del primer despliegue**; si no, el pipeline falla en `terraform init`. Nombre provisional: `terraform-bucket-alfie-ventascorp-{env}`. Se cambia en `backend-configs/backend-{env}.tfvars`.
+**8. Buckets del state de Terraform.** Terraform guarda lo que creó en un bucket S3 que **tiene que existir antes del primer despliegue**; si no, el pipeline falla en `terraform init`. Nombre provisional: `terraform-bucket-alfie-ventascorp-{env}`. Se cambia en `backend-configs/backend-{env}.tfvars`.
 
-**8. Crear los secretos.** Dos por lambda y por ambiente (sap-sync y notifications solo el `-app`), 24 en total, con la convención de la sección Secretos del README. La lista completa de nombres está en `environments/{env}.tfvars`.
+**9. Crear los secretos.** Dos por ambiente, compartidos por todas las lambdas: `delosi-alfie-ventascorp-{env}/db` y `delosi-alfie-ventascorp-{env}/app`. Los crea DevOps vacíos y el equipo de desarrollo carga las claves (sección Secretos del README).
 
-**9. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, voucher-management en `document-generation` y voucher-models en `model-image-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
+**10. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, voucher-management en `document-generation` y voucher-models en `model-image-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
 
-**10. Cómo se autentica Micros.** Micros llama a `/voucher-redemptions` sin JWT. Hoy la ruta va abierta. Hay que definir con el equipo de Micros si manda una API key u otra credencial, y con eso se ajusta el método en `apigateway.tf`.
+**11. Cómo se autentica Micros.** Micros llama a `/voucher-redemptions` sin JWT. Hoy la ruta va abierta. Hay que definir con el equipo de Micros si manda una API key u otra credencial, y con eso se ajusta el método en `apigateway.tf`.
 
-**11. Verificar el remitente en SES.** invoicing-notifications ya tiene permiso para enviar correos, pero SES solo envía desde un dominio o correo verificado en la cuenta.
+**12. Verificar el remitente en SES.** invoicing-notifications ya tiene permiso para enviar correos, pero SES solo envía desde un dominio o correo verificado en la cuenta.
 
