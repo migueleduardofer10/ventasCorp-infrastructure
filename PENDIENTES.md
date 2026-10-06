@@ -115,7 +115,7 @@ Los de la tabla son supuestos: cada equipo confirma el ensamblado, la clase y el
 
 **6. Red de las lambdas.** Los IDs de VPC, subnets y security group están copiados de `api-delosi-integration-infrastructure` sin verificar. Las lambdas necesitan llegar al PostgreSQL de Ventas Corp (puerto 5432), a Secrets Manager y a internet por NAT (IDP del JWT, SAP PI, API Delosi, Micros). Se cambian en `environments/{env}.tfvars`: `vpc_id`, `subnet_id1`, `subnet_id2`, `security_group_id`.
 
-**7. Buckets del state de Terraform.** Terraform guarda lo que creó en un bucket S3 que **tiene que existir antes del primer despliegue**; si no, el pipeline falla en `terraform init`. Nombre provisional: `terraform-bucket-delosi-ventascorp-{env}`. Se cambia en `backend-configs/backend-{env}.tfvars`.
+**7. Buckets del state de Terraform.** Terraform guarda lo que creó en un bucket S3 que **tiene que existir antes del primer despliegue**; si no, el pipeline falla en `terraform init`. Nombre provisional: `terraform-bucket-alfie-ventascorp-{env}`. Se cambia en `backend-configs/backend-{env}.tfvars`.
 
 **8. Crear los secretos.** Dos por lambda y por ambiente (sap-sync y notifications solo el `-app`), 24 en total, con la convención de la sección Secretos del README. La lista completa de nombres está en `environments/{env}.tfvars`.
 

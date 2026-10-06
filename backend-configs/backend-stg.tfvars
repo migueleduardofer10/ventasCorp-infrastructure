@@ -1,3 +1,3 @@
-bucket = "terraform-bucket-delosi-ventascorp-stg"
+bucket = "terraform-bucket-alfie-ventascorp-stg"
 key    = "terraform.tfstate"
 region = "us-east-1"
