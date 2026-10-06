@@ -127,8 +127,8 @@ locals {
     DB_SECRET_NAME         = var.document_generation_db_secret_name
     APP_SECRET_NAME        = var.document_generation_app_secret_name
 
-    # Bucket de los PDF: la receta inyecta S3_BUCKET_NAME con vales-s3.
-    # Bucket de donde lee las imágenes de fondo (solo lectura). Nombre según la tabla del equipo.
+    # Buckets: PDF de vales e imágenes de fondo. Nombres según la tabla del equipo.
+    S3_BUCKET_NAME               = module.documents_bucket.bucket_name
     BackgroundImages__BucketName = module.models_bucket.bucket_name
   }
 }
