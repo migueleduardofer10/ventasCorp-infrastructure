@@ -63,7 +63,7 @@ El scheduler lo crea la receta con `enable_scheduler = true` en el bloque de la 
 
 Las filas con ✔ están confirmadas por su equipo. El resto son supuestos marcados con `A CONFIRMAR` en `lambdas.tf`: cada equipo debe confirmar su ruta base y su handler ([PENDIENTES.md](PENDIENTES.md), puntos 1 y 4).
 
-Todas corren en VPC, con X-Ray activo y permiso de lectura sobre sus dos secretos. Las de API tienen timeout de 28 s porque el gateway corta a 29 s.
+Todas corren en VPC, con X-Ray activo y permiso de lectura sobre sus secretos. Las de API tienen timeout de 28 s porque el gateway corta a 29 s.
 
 **Nombre en AWS.** Es el que va en el `.gitlab-ci.yml` de cada repo app. En stg y prd es el mismo terminado en `-Stg` y `-Prd`:
 
@@ -126,7 +126,7 @@ Dos buckets en `s3.tf`, con la receta `modules/s3`: versionado, cifrado AES256, 
 
 ### Secretos
 
-Dos por lambda y por ambiente, creados a mano en Secrets Manager. Los tfvars solo guardan sus nombres, con esta convención:
+Dos por lambda y por ambiente (sap-sync y notifications solo tienen el `-app`: no usan base de datos), creados a mano en Secrets Manager. Los tfvars solo guardan sus nombres, con esta convención:
 
 ```
 delosi-ventascorp-{env}/{function_name}-db    → conexión a la base

@@ -109,11 +109,6 @@ variable "invoicing_approvals_app_secret_name" {
   type        = string
 }
 
-variable "invoicing_sap_sync_db_secret_name" {
-  description = "Secreto con la conexión a la base de datos de invoicing-sap-sync"
-  type        = string
-}
-
 variable "invoicing_sap_sync_app_secret_name" {
   description = "Secreto con la configuración sensible (JwtAuth, etc.) de invoicing-sap-sync"
   type        = string
@@ -136,11 +131,6 @@ variable "master_data_sync_db_secret_name" {
 
 variable "master_data_sync_app_secret_name" {
   description = "Secreto con la configuración sensible (JwtAuth, etc.) de master-data-sync"
-  type        = string
-}
-
-variable "invoicing_notifications_db_secret_name" {
-  description = "Secreto con la conexión a la base de datos de invoicing-notifications"
   type        = string
 }
 

@@ -52,7 +52,6 @@ locals {
   invoicing_sap_sync_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_sap_sync_db_secret_name
     APP_SECRET_NAME        = var.invoicing_sap_sync_app_secret_name
   }
 }
@@ -79,7 +78,6 @@ locals {
   invoicing_notifications_environment = {
     ENVIRONMENT            = var.execution_environment
     ASPNETCORE_ENVIRONMENT = var.execution_environment
-    DB_SECRET_NAME         = var.invoicing_notifications_db_secret_name
     APP_SECRET_NAME        = var.invoicing_notifications_app_secret_name
   }
 }
@@ -108,8 +106,7 @@ locals {
     # (prefijo voucher-model/background-images). Nombre de variable según la tabla del equipo.
     AWS__S3__BucketName = module.models_bucket.bucket_name
 
-    # Cola a la que publica los modelos para generar su PNG.
-    # Nombres de variable confirmados por el equipo de facturación.
+    # Cola a la que publica los modelos para generar su PNG. Variable A CONFIRMAR por el equipo.
     Sqs__ModelImageGenerationQueueUrl = module.sqs_queues.queue_urls["model-image-generation"]
   }
 }

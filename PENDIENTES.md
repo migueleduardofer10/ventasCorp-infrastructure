@@ -117,7 +117,7 @@ Los de la tabla son supuestos: cada equipo confirma el ensamblado, la clase y el
 
 **7. Buckets del state de Terraform.** Terraform guarda lo que creó en un bucket S3 que **tiene que existir antes del primer despliegue**; si no, el pipeline falla en `terraform init`. Nombre provisional: `terraform-bucket-delosi-ventascorp-{env}`. Se cambia en `backend-configs/backend-{env}.tfvars`.
 
-**8. Crear los secretos.** Dos por lambda y por ambiente, con la convención de la sección Secretos del README. La lista completa de nombres está en `environments/{env}.tfvars`.
+**8. Crear los secretos.** Dos por lambda y por ambiente (sap-sync y notifications solo el `-app`), 24 en total, con la convención de la sección Secretos del README. La lista completa de nombres está en `environments/{env}.tfvars`.
 
 **9. Permiso para publicar en SQS.** La receta de lambda da permiso para leer una cola, no para escribir. invoicing-approvals publica en `sap-sync` y `notifications`, voucher-management en `document-generation` y voucher-models en `model-image-generation`; sin ese permiso AWS responde `AccessDenied`. Hace falta agregar la opción a la receta o definir cómo darlo.
 

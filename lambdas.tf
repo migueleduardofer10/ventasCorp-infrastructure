@@ -169,7 +169,6 @@ module "invoicing_sap_sync" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_sap_sync_db_secret_name,
     var.invoicing_sap_sync_app_secret_name,
   ]
 
@@ -290,7 +289,6 @@ module "invoicing_notifications" {
 
   enable_secrets_manager_permissions = true
   secrets_manager_secret_names = [
-    var.invoicing_notifications_db_secret_name,
     var.invoicing_notifications_app_secret_name,
   ]
 
